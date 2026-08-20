@@ -2,20 +2,23 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Motoboy - Açaí Station</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background: #eef2f3; }
-        .pedido-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #5d2e8c; }
-        .status-entrega { color: green; font-weight: bold; }
-        .status-concluido { color: gray; font-weight: bold; text-decoration: line-through; }
-        button { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #218838; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #eef2f3; }
+        h1 { color: #1e3a8a; }
+        .pedido-card { background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 6px solid #16a34a; }
+        .status-entrega { color: #16a34a; font-weight: bold; }
+        .status-concluido { color: #4b5563; font-weight: bold; text-decoration: line-through; }
+        button { background: #16a34a; color: white; padding: 10px 18px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        button:hover { background: #15803d; }
+        p { margin: 8px 0; }
     </style>
 </head>
 <body>
     <h1>Painel de Entregas - Motoboy 🛵</h1>
-    <p>Acompanhe os pedidos prontos para entrega em tempo real:</p>
-    <div id="lista-entregas">Aguardando pedidos para entrega...</div>
+    <p>Pedidos prontos para despacho:</p>
+    <div id="lista-entregas">Aguardando entregas...</div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -23,8 +26,6 @@
 
         socket.on('atualizar_pedidos', (pedidos) => {
             const container = document.getElementById('lista-entregas');
-            
-            // Filtra apenas os pedidos que estão com status 'Entrega' ou 'Concluido' (ou adapte conforme sua regra)
             const pedidosEntrega = pedidos.filter(p => p.status === 'Entrega' || p.status === 'Concluido');
 
             if (pedidosEntrega.length === 0) {
@@ -34,11 +35,12 @@
 
             container.innerHTML = pedidosEntrega.map(p => `
                 <div class="pedido-card">
-                    <h3>Entrega #${p.id} - Cliente: ${p.nome}</h3>
-                    <p><strong>Tamanho:</strong> ${p.tamanho}</p>
-                    <p><strong>Acompanhamentos:</strong> ${p.acompanhamentos || 'Nenhum'}</p>
-                    <p><strong>Status Atual:</strong> <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
-                    ${p.status !== 'Concluido' ? `<button onclick="concluirEntrega(${p.id})">Marcar como Entregue</button>` : '<p><em>Pedido Entregue ✅</em></p>'}
+                    <h3>Entrega #${p.id} - ${p.nome}</h3>
+                    <p><strong>Telefone:</strong> ${p.telefone}</p>
+                    <p><strong>Endereço:</strong> <span style="color: #b91c1c; font-weight: bold;">${p.endereco}</span></p>
+                    <p><strong>Valor a Receber:</strong> ${p.total} (${p.pagamento})</p>
+                    <p><strong>Status:</strong> <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
+                    ${p.status !== 'Concluido' ? `<button onclick="concluirEntrega(${p.id})">Marcar como Entregue ✅</button>` : '<p style="text-align: center; color: green; font-weight: bold; margin-top: 10px;">Entregue com Sucesso!</p>'}
                 </div>
             `).join('');
         });

@@ -2,51 +2,104 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Açaí Station - Peça o seu!</title>
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
+        h1 { text-align: center; color: #5d2e8c; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 15px; }
-        button { background: #5d2e8c; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; background: #5d2e8c; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #4a2370; }
     </style>
 </head>
 <body>
-    <h1>Açaí Station 🍧</h1>
-    <div class="form-group">
-        <label>Nome do Cliente:</label><br>
-        <input type="text" id="nomeCliente" placeholder="Seu nome">
+    <div class="card">
+        <h1>Açaí Station 🍧</h1>
+        
+        <div class="form-group">
+            <label>Seu Nome:</label>
+            <input type="text" id="nomeCliente" placeholder="Ex: Maria Silva">
+        </div>
+
+        <div class="form-group">
+            <label>Telefone / WhatsApp:</label>
+            <input type="text" id="telefone" placeholder="Ex: (11) 99999-9999">
+        </div>
+
+        <div class="form-group">
+            <label>Tamanho e Valor:</label>
+            <select id="tamanho" onchange="atualizarTotal()">
+                <option value="300ml" data-preco="15">300ml - R$ 15,00</option>
+                <option value="500ml" data-preco="20">500ml - R$ 20,00</option>
+                <option value="700ml" data-preco="25">700ml - R$ 25,00</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Acompanhamentos:</label>
+            <input type="text" id="acompanhamentos" placeholder="Ex: Leite condensado, morango, paçoca">
+        </div>
+
+        <div class="form-group">
+            <label>Endereço de Entrega (Rua, Número, Bairro):</label>
+            <input type="text" id="endereco" placeholder="Ex: Rua das Flores, 123 - Centro">
+        </div>
+
+        <div class="form-group">
+            <label>Forma de Pagamento:</label>
+            <select id="pagamento">
+                <option value="Pix">Pix</option>
+                <option value="Cartão">Cartão (na entrega)</option>
+                <option value="Dinheiro">Dinheiro (troco para quanto?)</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px; font-size: 18px; font-weight: bold; text-align: right;">
+            Total: <span id="spanTotal" style="color: #28a745;">R$ 15,00</span>
+        </div>
+
+        <button onclick="enviarPedido()">Finalizar Pedido 🚀</button>
     </div>
-    <div class="form-group">
-        <label>Tamanho:</label><br>
-        <select id="tamanho">
-            <option value="300ml">300ml</option>
-            <option value="500ml">500ml</option>
-            <option value="700ml">700ml</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>Acompanhamentos (separados por vírgula):</label><br>
-        <input type="text" id="acompanhamentos" placeholder="Ex: Leite condensado, morango">
-    </div>
-    <button onclick="enviarPedido()">Confirmar Pedido</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
 
+        function atualizarTotal() {
+            const select = document.getElementById('tamanho');
+            const preco = select.options[select.selectedIndex].getAttribute('data-preco');
+            document.getElementById('spanTotal').innerText = `R$ ${preco},00`;
+        }
+
         function enviarPedido() {
+            const selectTamanho = document.getElementById('tamanho');
+            const preco = selectTamanho.options[selectTamanho.selectedIndex].getAttribute('data-preco');
+
             const pedido = {
                 nome: document.getElementById('nomeCliente').value,
-                tamanho: document.getElementById('tamanho').value,
+                telefone: document.getElementById('telefone').value,
+                tamanho: selectTamanho.value,
                 acompanhamentos: document.getElementById('acompanhamentos').value,
+                endereco: document.getElementById('endereco').value,
+                pagamento: document.getElementById('pagamento').value,
+                total: `R$ ${preco},00`,
                 hora: new Date().toLocaleTimeString()
             };
 
-            if(pedido.nome) {
-                socket.emit('novo_pedido', pedido);
-                alert('Pedido enviado com sucesso!');
-            } else {
-                alert('Por favor, informe seu nome.');
+            if (!pedido.nome || !pedido.endereco || !pedido.telefone) {
+                alert('Por favor, preencha seu nome, telefone e endereço.');
+                return;
             }
+
+            socket.emit('novo_pedido', pedido);
+            alert('Pedido realizado com sucesso! Acompanhe o status.');
+            
+            // Limpar campos básicos
+            document.getElementById('acompanhamentos').value = '';
+            document.getElementById('endereco').value = '';
         }
     </script>
 </body>

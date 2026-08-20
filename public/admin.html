@@ -2,14 +2,20 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Admin - Açaí Station</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; background: #f4f4f9; }
-        .pedido-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .status-pendente { color: orange; font-weight: bold; }
-        .status-preparo { color: blue; font-weight: bold; }
-        .status-entrega { color: green; font-weight: bold; }
-        button { padding: 5px 10px; margin-right: 5px; cursor: pointer; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f4f4f9; }
+        h1 { color: #5d2e8c; }
+        .pedido-card { background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 6px solid #5d2e8c; }
+        .status-pendente { color: #d97706; font-weight: bold; }
+        .status-preparo { color: #2563eb; font-weight: bold; }
+        .status-entrega { color: #16a34a; font-weight: bold; }
+        .status-concluido { color: #4b5563; font-weight: bold; }
+        button { padding: 8px 14px; margin-right: 5px; margin-top: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-preparo { background: #2563eb; }
+        .btn-entrega { background: #16a34a; }
+        p { margin: 6px 0; }
     </style>
 </head>
 <body>
@@ -29,14 +35,16 @@
 
             container.innerHTML = pedidos.map(p => `
                 <div class="pedido-card">
-                    <h3>Pedido #${p.id} - ${p.nome}</h3>
-                    <p><strong>Tamanho:</strong> ${p.tamanho}</p>
+                    <h3>Pedido #${p.id} - ${p.nome} (${p.telefone})</h3>
+                    <p><strong>Tamanho:</strong> ${p.tamanho} (${p.total})</p>
                     <p><strong>Acompanhamentos:</strong> ${p.acompanhamentos || 'Nenhum'}</p>
-                    <p><strong>Hora:</strong> ${p.hora}</p>
+                    <p><strong>Endereço:</strong> ${p.endereco}</p>
+                    <p><strong>Pagamento:</strong> ${p.pagamento}</p>
+                    <p><strong>Horário:</strong> ${p.hora}</p>
                     <p><strong>Status:</strong> <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
                     <div>
-                        <button onclick="mudarStatus(${p.id}, 'Preparo')">Em Preparo</button>
-                        <button onclick="mudarStatus(${p.id}, 'Entrega')">Enviar para Motoboy</button>
+                        <button class="btn-preparo" onclick="mudarStatus(${p.id}, 'Preparo')">Em Preparo</button>
+                        <button class="btn-entrega" onclick="mudarStatus(${p.id}, 'Entrega')">Enviar para Motoboy</button>
                     </div>
                 </div>
             `).join('');
