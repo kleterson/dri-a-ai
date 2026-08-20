@@ -3,65 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Açaí Station - Peça o seu!</title>
+    <title>Açaí Station - O Melhor Açaí da Região</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background: #f8f9fa; color: #333; }
-        h1 { text-align: center; color: #5d2e8c; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        button { width: 100%; background: #5d2e8c; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #4a2370; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            /* Fundo temático elegante com gradiente e imagem de alta qualidade voltada a açaí */
+            background: linear-gradient(rgba(35, 11, 51, 0.85), rgba(20, 5, 30, 0.95)), 
+                        url('https://images.unsplash.com/photo-1590301157890-4810ed352733?q=80&w=1200&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a154b;
+            margin-bottom: 25px;
+            font-size: 26px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Estilo dos Inputs Flutuantes */
+        .input-group {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .input-group input, 
+        .input-group select {
+            width: 100%;
+            padding: 16px 14px 10px 14px;
+            border: 2px solid #e1d7eb;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            background: #fff;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .input-group select {
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%235d2e8c%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 10px;
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #fff;
+            padding: 0 5px;
+            color: #7c7c7c;
+            font-size: 15px;
+            pointer-events: none;
+            transition: 0.3s ease all;
+        }
+
+        /* Efeito flutuante quando o input tem foco ou contém texto */
+        .input-group input:focus, 
+        .input-group select:focus {
+            border-color: #5d2e8c;
+            box-shadow: 0 0 8px rgba(93, 46, 140, 0.2);
+        }
+
+        .input-group input:focus ~ label,
+        .input-group input:not(:placeholder-shown) ~ label,
+        .input-group select:focus ~ label,
+        .input-group select:not([value=""]) ~ label {
+            top: 0;
+            font-size: 12px;
+            color: #5d2e8c;
+            font-weight: bold;
+        }
+
+        .resumo-pedido {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f7f3fc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #5d2e8c;
+        }
+
+        .resumo-pedido span {
+            font-size: 16px;
+            color: #4a154b;
+            font-weight: bold;
+        }
+
+        #spanTotal {
+            font-size: 20px;
+            color: #16a34a;
+        }
+
+        button.btn-enviar {
+            width: 100%;
+            background: linear-gradient(135deg, #6b21a8, #4a154b);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(107, 33, 168, 0.4);
+        }
+
+        button.btn-enviar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 33, 168, 0.6);
+        }
+
+        button.btn-enviar:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
-    <div class="card">
+
+    <div class="container">
         <h1>Açaí Station 🍧</h1>
         
-        <div class="form-group">
-            <label>Seu Nome:</label>
-            <input type="text" id="nomeCliente" placeholder="Ex: Maria Silva">
+        <div class="input-group">
+            <input type="text" id="nomeCliente" placeholder=" ">
+            <label>Seu Nome Completo</label>
         </div>
 
-        <div class="form-group">
-            <label>Telefone / WhatsApp:</label>
-            <input type="text" id="telefone" placeholder="Ex: (11) 99999-9999">
+        <div class="input-group">
+            <input type="text" id="telefone" placeholder=" ">
+            <label>Telefone / WhatsApp</label>
         </div>
 
-        <div class="form-group">
-            <label>Tamanho e Valor:</label>
+        <div class="input-group">
             <select id="tamanho" onchange="atualizarTotal()">
+                <option value="" disabled selected></option>
                 <option value="300ml" data-preco="15">300ml - R$ 15,00</option>
-                <option value="500ml" data-preco="20">500ml - R$ 20,00</option>
+                <option value="500ml" data-preco="20" selected>500ml - R$ 20,00</option>
                 <option value="700ml" data-preco="25">700ml - R$ 25,00</option>
             </select>
+            <label>Tamanho do Copo/Tigela</label>
         </div>
 
-        <div class="form-group">
-            <label>Acompanhamentos:</label>
-            <input type="text" id="acompanhamentos" placeholder="Ex: Leite condensado, morango, paçoca">
+        <div class="input-group">
+            <input type="text" id="acompanhamentos" placeholder=" ">
+            <label>Acompanhamentos (Ex: Morango, Leite Condensado)</label>
         </div>
 
-        <div class="form-group">
-            <label>Endereço de Entrega (Rua, Número, Bairro):</label>
-            <input type="text" id="endereco" placeholder="Ex: Rua das Flores, 123 - Centro">
+        <div class="input-group">
+            <input type="text" id="endereco" placeholder=" ">
+            <label>Endereço de Entrega (Rua, Número, Bairro)</label>
         </div>
 
-        <div class="form-group">
-            <label>Forma de Pagamento:</label>
+        <div class="input-group">
             <select id="pagamento">
-                <option value="Pix">Pix</option>
+                <option value="Pix" selected>Pix</option>
                 <option value="Cartão">Cartão (na entrega)</option>
-                <option value="Dinheiro">Dinheiro (troco para quanto?)</option>
+                <option value="Dinheiro">Dinheiro (troco)</option>
             </select>
+            <label>Forma de Pagamento</label>
         </div>
 
-        <div style="margin-bottom: 15px; font-size: 18px; font-weight: bold; text-align: right;">
-            Total: <span id="spanTotal" style="color: #28a745;">R$ 15,00</span>
+        <div class="resumo-pedido">
+            <span>Total a pagar:</span>
+            <span id="spanTotal">R$ 20,00</span>
         </div>
 
-        <button onclick="enviarPedido()">Finalizar Pedido 🚀</button>
+        <button class="btn-enviar" onclick="enviarPedido()">Finalizar Pedido 🚀</button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -73,6 +208,11 @@
             const preco = select.options[select.selectedIndex].getAttribute('data-preco');
             document.getElementById('spanTotal').innerText = `R$ ${preco},00`;
         }
+
+        // Definir valor padrão inicial ao carregar a página
+        window.onload = () => {
+            atualizarTotal();
+        };
 
         function enviarPedido() {
             const selectTamanho = document.getElementById('tamanho');
@@ -90,14 +230,14 @@
             };
 
             if (!pedido.nome || !pedido.endereco || !pedido.telefone) {
-                alert('Por favor, preencha seu nome, telefone e endereço.');
+                alert('Por favor, preencha seu nome, telefone e endereço para continuar.');
                 return;
             }
 
             socket.emit('novo_pedido', pedido);
             alert('Pedido realizado com sucesso! Acompanhe o status.');
             
-            // Limpar campos básicos
+            // Limpar campos de texto
             document.getElementById('acompanhamentos').value = '';
             document.getElementById('endereco').value = '';
         }
