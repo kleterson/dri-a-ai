@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Motoboy - Açaí Station</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background: #eef2f3; }
+        .pedido-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #5d2e8c; }
+        .status-entrega { color: green; font-weight: bold; }
+        .status-concluido { color: gray; font-weight: bold; text-decoration: line-through; }
+        button { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <h1>Painel de Entregas - Motoboy 🛵</h1>
+    <p>Acompanhe os pedidos prontos para entrega em tempo real:</p>
+    <div id="lista-entregas">Aguardando pedidos para entrega...</div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('atualizar_pedidos', (pedidos) => {
+            const container = document.getElementById('lista-entregas');
+            
+            // Filtra apenas os pedidos que estão com status 'Entrega' ou 'Concluido' (ou adapte conforme sua regra)
+            const pedidosEntrega = pedidos.filter(p => p.status === 'Entrega' || p.status === 'Concluido');
+
+            if (pedidosEntrega.length === 0) {
+                container.innerHTML = '<p>Nenhuma entrega no momento.</p>';
+                return;
+            }
+
+            container.innerHTML = pedidosEntrega.map(p => `
+                <div class="pedido-card">
+                    <h3>Entrega #${p.id} - Cliente: ${p.nome}</h3>
+                    <p><strong>Tamanho:</strong> ${p.tamanho}</p>
+                    <p><strong>Acompanhamentos:</strong> ${p.acompanhamentos || 'Nenhum'}</p>
+                    <p><strong>Status Atual:</strong> <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
+                    ${p.status !== 'Concluido' ? `<button onclick="concluirEntrega(${p.id})">Marcar como Entregue</button>` : '<p><em>Pedido Entregue ✅</em></p>'}
+                </div>
+            `).join('');
+        });
+
+        function concluirEntrega(id) {
+            socket.emit('mudar_status', { id, status: 'Concluido' });
+        }
+    </script>
+</body>
+</html>

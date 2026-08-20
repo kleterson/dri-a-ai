@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Açaí Station - Peça o seu!</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 20px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        button { background: #5d2e8c; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Açaí Station 🍧</h1>
+    <div class="form-group">
+        <label>Nome do Cliente:</label><br>
+        <input type="text" id="nomeCliente" placeholder="Seu nome">
+    </div>
+    <div class="form-group">
+        <label>Tamanho:</label><br>
+        <select id="tamanho">
+            <option value="300ml">300ml</option>
+            <option value="500ml">500ml</option>
+            <option value="700ml">700ml</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Acompanhamentos (separados por vírgula):</label><br>
+        <input type="text" id="acompanhamentos" placeholder="Ex: Leite condensado, morango">
+    </div>
+    <button onclick="enviarPedido()">Confirmar Pedido</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function enviarPedido() {
+            const pedido = {
+                nome: document.getElementById('nomeCliente').value,
+                tamanho: document.getElementById('tamanho').value,
+                acompanhamentos: document.getElementById('acompanhamentos').value,
+                hora: new Date().toLocaleTimeString()
+            };
+
+            if(pedido.nome) {
+                socket.emit('novo_pedido', pedido);
+                alert('Pedido enviado com sucesso!');
+            } else {
+                alert('Por favor, informe seu nome.');
+            }
+        }
+    </script>
+</body>
+</html>

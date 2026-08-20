@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin - Açaí Station</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; background: #f4f4f9; }
+        .pedido-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status-pendente { color: orange; font-weight: bold; }
+        .status-preparo { color: blue; font-weight: bold; }
+        .status-entrega { color: green; font-weight: bold; }
+        button { padding: 5px 10px; margin-right: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Painel de Pedidos - Açaí Station 📊</h1>
+    <div id="lista-pedidos">Carregando pedidos...</div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('atualizar_pedidos', (pedidos) => {
+            const container = document.getElementById('lista-pedidos');
+            if (pedidos.length === 0) {
+                container.innerHTML = '<p>Nenhum pedido no momento.</p>';
+                return;
+            }
+
+            container.innerHTML = pedidos.map(p => `
+                <div class="pedido-card">
+                    <h3>Pedido #${p.id} - ${p.nome}</h3>
+                    <p><strong>Tamanho:</strong> ${p.tamanho}</p>
+                    <p><strong>Acompanhamentos:</strong> ${p.acompanhamentos || 'Nenhum'}</p>
+                    <p><strong>Hora:</strong> ${p.hora}</p>
+                    <p><strong>Status:</strong> <span class="status-${p.status.toLowerCase()}">${p.status}</span></p>
+                    <div>
+                        <button onclick="mudarStatus(${p.id}, 'Preparo')">Em Preparo</button>
+                        <button onclick="mudarStatus(${p.id}, 'Entrega')">Enviar para Motoboy</button>
+                    </div>
+                </div>
+            `).join('');
+        });
+
+        function mudarStatus(id, status) {
+            socket.emit('mudar_status', { id, status });
+        }
+    </script>
+</body>
+</html>
